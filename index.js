@@ -1,38 +1,31 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+require("dotenv").config();
+const express = require("express");
+const connectDB = require("./config/db");
+const cors = require("cors");
+const contactRoutes = require("./routes/contactRoutes");
+
 const app = express();
 
-// Ultimate CORS Configuration
-const allowedOrigins = [
-  'https://portfolio-frontend-beta-seven.vercel.app',
-  'https://portfolio-frontend-mey4.vercel.app',
-  'http://localhost:3000'
-];
+// Connect to MongoDB
+connectDB();
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+// Middleware
+app.use(cors({
+  origin: "https://portfolio-frontend-mey4.vercel.app"
+}));
+app.use(express.json());
 
-// Handle preflight requests
-app.options('*', (req, res) => {
-  res.sendStatus(200);
-});
-
-// Your routes
-app.post('/api/contact', (req, res) => {
-  // Your contact form handling logic
-  res.json({ success: true, message: "Message received!" });
-});
-
-// ... rest of your backend code
+// Routes
+app.use("/api", contactRoutes);
+app.get('/',(req,res)=>{
+  return res.status(200).json({ massage: "app is running" });
+  
+})
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+
