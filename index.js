@@ -9,24 +9,32 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Middleware
-// app.use(cors());
-app.use(cors({
+// Enhanced CORS configuration
+const corsOptions = {
   origin: [
-    'https://portfolio-frontend-mey4.vercel.app',
+    'https://portfolio-frontend-beta-seven.vercel.app', // Your actual frontend URL
+    'https://portfolio-frontend-mey4.vercel.app', // Your backend URL
     'http://localhost:3000' // For local testing
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
-}));
+};
+
+// Apply CORS
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+// Middleware
 app.use(express.json());
 
 // Routes
 app.use("/api", contactRoutes);
-app.get('/',(req,res)=>{
-  return res.status(200).json({ massage: "app is running" });
-  
-})
+app.get('/', (req, res) => {
+  return res.status(200).json({ message: "app is running" });
+});
 
 const PORT = process.env.PORT || 5000;
 
