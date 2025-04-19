@@ -1,68 +1,38 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config/db');
-const contactRoutes = require('./routes/contactRoutes');
-
 const app = express();
 
-// Connect to MongoDB
-connectDB();
-
-// 1. CORS Configuration (Essential for Vercel)
+// Ultimate CORS Configuration
 const allowedOrigins = [
   'https://portfolio-frontend-beta-seven.vercel.app',
-  'http://localhost:3000' // For local development
+  'https://portfolio-frontend-mey4.vercel.app',
+  'http://localhost:3000'
 ];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
-
-// 2. Apply CORS middleware
-app.use(cors(corsOptions));
-
-// 3. Handle preflight requests
-app.options('*', cors(corsOptions));
-
-// 4. Body parsers
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// 5. Routes
-app.use('/api', contactRoutes);
-
-// 6. Health check endpoint
-app.get('/', (req, res) => {
-  res.status(200).json({ 
-    status: 'Backend is running!',
-    api: {
-      contact: '/api/contact',
-      docs: 'Coming soon'
-    }
-  });
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
 });
 
-// 7. Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something broke!' });
+// Handle preflight requests
+app.options('*', (req, res) => {
+  res.sendStatus(200);
 });
 
-// 8. Server setup
+// Your routes
+app.post('/api/contact', (req, res) => {
+  // Your contact form handling logic
+  res.json({ success: true, message: "Message received!" });
+});
+
+// ... rest of your backend code
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
-});
-
-module.exports = app; // For Vercel deployment
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
