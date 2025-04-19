@@ -11,7 +11,9 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: "https://portfolio-frontend-mey4.vercel.app"
+  origin: "https://portfolio-frontend-beta-seven.vercel.app", // Your actual frontend
+  methods: ["GET", "POST"], // optional but good
+  credentials: true, // optional if using cookies/sessions
 }));
 app.use(express.json());
 
