@@ -11,7 +11,7 @@ connectDB();
 
 // ✅ CORS config
 app.use(cors({
-  origin: ["https://your-frontend-domain.vercel.app"],  // your frontend domain
+  origin: ["https://portfolio-frontend-beta-seven.vercel.app"],  // your frontend domain
   methods: ["POST", "GET"],
   credentials: true,
 }));
