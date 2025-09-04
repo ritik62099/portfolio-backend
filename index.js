@@ -10,7 +10,11 @@ const app = express();
 connectDB();
 
 // ✅ CORS config
-app.use(cors());
+app.use(cors({
+  origin: ["https://your-frontend-domain.vercel.app"],  // your frontend domain
+  methods: ["POST", "GET"],
+  credentials: true,
+}));
 
 // ✅ Manual headers for preflight fix
 
